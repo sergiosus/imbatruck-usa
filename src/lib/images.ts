@@ -1,21 +1,21 @@
 /**
- * High-quality royalty-free images from Unsplash. 4:3 ratio (w=800&h=600&fit=crop).
- * No brand logos. Used when listing has no imageUrls.
+ * Placeholder images when listing has no uploaded image. Stored in /public/placeholders/.
+ * Listings show only uploaded images or these placeholders — no external stock photos.
  */
-export const CATEGORY_IMAGES: Record<string, string> = {
-  trucks: "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=800&h=600&fit=crop",
-  trailers: "https://images.unsplash.com/photo-1519003722824-194d4455a60c?w=800&h=600&fit=crop",
-  parts: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop",
-  equipment: "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=800&h=600&fit=crop",
-  "freight-services": "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=800&h=600&fit=crop",
-  drivers: "https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=800&h=600&fit=crop",
+const PLACEHOLDERS: Record<string, string> = {
+  trucks: "/placeholders/placeholder-truck.svg",
+  trailers: "/placeholders/placeholder-trailer.svg",
+  parts: "/placeholders/placeholder-parts.svg",
+  equipment: "/placeholders/placeholder-equipment.svg",
+  "freight-services": "/placeholders/placeholder-truck.svg",
+  drivers: "/placeholders/placeholder-default.svg",
 };
 
-export const HERO_IMAGE_URL = "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=1200&h=675&fit=crop";
+export const HERO_IMAGE_URL = "/placeholders/hero-placeholder.svg";
 
 /** Fallback when no image URL is provided (e.g. in ImageGallery). */
-export const DEFAULT_IMAGE_URL = CATEGORY_IMAGES.trucks;
+export const DEFAULT_IMAGE_URL = PLACEHOLDERS.trucks;
 
-export function getListingImageUrl(category: string, index = 0): string {
-  return CATEGORY_IMAGES[category] ?? CATEGORY_IMAGES.trucks;
+export function getListingImageUrl(category: string, _index = 0): string {
+  return PLACEHOLDERS[category] ?? PLACEHOLDERS.trucks;
 }

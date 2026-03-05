@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" fill="none">
+  <rect width="800" height="450" fill="#e5e7eb"/>
+  <rect x="150" y="220" width="500" height="120" rx="4" stroke="#9ca3af" stroke-width="2" fill="#d1d5db"/>
+  <circle cx="280" cy="360" r="30" fill="#9ca3af"/>
+  <circle cx="520" cy="360" r="30" fill="#9ca3af"/>
+  <text x="400" y="180" text-anchor="middle" fill="#6b7280" font-family="system-ui,sans-serif" font-size="14">Trailer</text>
+</svg>

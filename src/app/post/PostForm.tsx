@@ -2,14 +2,21 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { CATEGORIES, US_STATES, CONDITIONS, type CategoryId } from "@/lib/data";
 import { Breadcrumb } from "@/components/Breadcrumb";
+import { getT } from "@/lib/translations";
 
 const inputClass = "mt-1 w-full rounded-lg border border-gray-300 px-3 py-2.5 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20";
 const labelClass = "block text-sm font-medium text-foreground";
 
 export function PostForm({ lang }: { lang: string }) {
+  const t = getT(lang);
   const router = useRouter();
+  const { data: session, status } = useSession();
+  const [submitError, setSubmitError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const [category, setCategory] = useState<CategoryId | "">("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -52,17 +59,73 @@ export function PostForm({ lang }: { lang: string }) {
   const [driverExperience, setDriverExperience] = useState("");
   const [driverAvailability, setDriverAvailability] = useState("");
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    router.push(`/${lang}/listings`);
+    setSubmitError("");
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/listings/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: title.trim(),
+          category: category || undefined,
+          price: price ? Number(price) : 0,
+          location: { state, city },
+          description: description.trim(),
+          email: email.trim(),
+          phone: phone.trim() || undefined,
+          images: [],
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 401) {
+        setSubmitError("You must sign in to post a listing.");
+        setSubmitting(false);
+        return;
+      }
+      if (!res.ok) {
+        setSubmitError(data.error ?? "Could not create listing. Try again.");
+        setSubmitting(false);
+        return;
+      }
+      router.push(`/${lang}/listings`);
+      router.refresh();
+    } catch {
+      setSubmitError("Something went wrong. Try again.");
+      setSubmitting(false);
+    }
+  }
+
+  if (status === "loading") {
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-8">
+        <Breadcrumb items={[{ label: t.listing.home, href: `/${lang}` }, { label: t.nav.post }]} />
+        <div className="mt-6 rounded-2xl border border-gray-200 bg-white p-12 text-center text-secondary">Loading…</div>
+      </div>
+    );
+  }
+
+  if (!session) {
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-8">
+        <Breadcrumb items={[{ label: t.listing.home, href: `/${lang}` }, { label: t.nav.post }]} />
+        <div className="mt-6 rounded-2xl border border-gray-200 bg-white p-8 text-center">
+          <h1 className="text-xl font-bold text-foreground">Post a listing</h1>
+          <p className="mt-4 text-foreground">You must sign in to post a listing.</p>
+          <Link href={`/${lang}/signin?callbackUrl=/${encodeURIComponent(lang)}/post`} className="mt-6 inline-block rounded-lg bg-cta px-6 py-3 font-medium text-white hover:bg-cta-hover">Sign in</Link>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8">
-      <Breadcrumb items={[{ label: "Home", href: `/${lang}` }, { label: "Post listing" }]} />
+      <Breadcrumb items={[{ label: t.listing.home, href: `/${lang}` }, { label: t.nav.post }]} />
       <div className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
         <h1 className="text-2xl font-bold text-foreground">Create a listing</h1>
         <p className="mt-1 text-secondary">No payments on the platform. US-focused marketplace. All fields below are required unless marked optional.</p>
+        {submitError && <p className="mt-4 rounded-lg bg-red-50 p-3 text-sm text-red-700" role="alert">{submitError}</p>}
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
           <div>
             <label htmlFor="category" className={labelClass}>Category</label>
@@ -192,7 +255,7 @@ export function PostForm({ lang }: { lang: string }) {
               </div>
             </div>
           )}
-          <button type="submit" className="w-full rounded-xl bg-cta py-3.5 text-base font-semibold text-white shadow-md hover:bg-cta-hover focus:outline-none focus:ring-2 focus:ring-cta focus:ring-offset-2">Submit</button>
+          <button type="submit" disabled={submitting} className="w-full rounded-xl bg-cta py-3.5 text-base font-semibold text-white shadow-md hover:bg-cta-hover focus:outline-none focus:ring-2 focus:ring-cta focus:ring-offset-2 disabled:opacity-70">{submitting ? "Submitting…" : "Submit"}</button>
         </form>
       </div>
     </div>

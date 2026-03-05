@@ -14,6 +14,11 @@ export interface FilterState {
   mileageMin: string;
   mileageMax: string;
   condition: string;
+  manufacturer: string;
+  engine: string;
+  transmission: string;
+  trailerLength: string;
+  fuelType: string;
 }
 
 interface FilterSidebarProps {
@@ -36,6 +41,11 @@ export const defaultFilters: FilterState = {
   mileageMin: "",
   mileageMax: "",
   condition: "",
+  manufacturer: "",
+  engine: "",
+  transmission: "",
+  trailerLength: "",
+  fuelType: "",
 };
 
 export function FilterSidebar({
@@ -52,7 +62,7 @@ export function FilterSidebar({
 
   return (
     <aside className="w-full shrink-0 lg:w-64">
-      <div className="sticky top-4 space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+      <div className="sticky top-24 space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm lg:top-4">
         <h3 className="font-semibold text-foreground">{t.filters.title}</h3>
         <input
           type="search"
@@ -166,6 +176,32 @@ export function FilterSidebar({
             {CONDITIONS.map((c) => (
               <option key={c} value={c}>{conditionLabels[c] ?? c}</option>
             ))}
+          </select>
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-secondary">Manufacturer</label>
+          <input type="text" value={filters.manufacturer} onChange={(e) => onFilterChange("manufacturer", e.target.value)} placeholder="e.g. Kenworth" className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-secondary">Engine</label>
+          <input type="text" value={filters.engine} onChange={(e) => onFilterChange("engine", e.target.value)} placeholder="e.g. PACCAR MX-13" className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-secondary">Transmission</label>
+          <input type="text" value={filters.transmission} onChange={(e) => onFilterChange("transmission", e.target.value)} placeholder="e.g. Auto" className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-secondary">Trailer length</label>
+          <input type="text" value={filters.trailerLength} onChange={(e) => onFilterChange("trailerLength", e.target.value)} placeholder="e.g. 53 ft" className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-secondary">Fuel type</label>
+          <select value={filters.fuelType} onChange={(e) => onFilterChange("fuelType", e.target.value)} className="mt-1 w-full rounded border border-gray-300 bg-white px-3 py-2 text-sm">
+            <option value="">Any</option>
+            <option value="diesel">Diesel</option>
+            <option value="gasoline">Gasoline</option>
+            <option value="electric">Electric</option>
+            <option value="cng">CNG</option>
           </select>
         </div>
         <div className="flex flex-col gap-2">

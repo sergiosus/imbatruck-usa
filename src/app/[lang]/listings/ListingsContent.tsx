@@ -24,6 +24,11 @@ function parseFilters(searchParams: URLSearchParams): FilterState {
     mileageMin: searchParams.get("mileageMin") ?? defaultFilters.mileageMin,
     mileageMax: searchParams.get("mileageMax") ?? defaultFilters.mileageMax,
     condition: searchParams.get("condition") ?? defaultFilters.condition,
+    manufacturer: searchParams.get("manufacturer") ?? defaultFilters.manufacturer,
+    engine: searchParams.get("engine") ?? defaultFilters.engine,
+    transmission: searchParams.get("transmission") ?? defaultFilters.transmission,
+    trailerLength: searchParams.get("trailerLength") ?? defaultFilters.trailerLength,
+    fuelType: searchParams.get("fuelType") ?? defaultFilters.fuelType,
   };
 }
 
@@ -85,6 +90,22 @@ export function ListingsContent({ lang }: { lang: string }) {
     if (mMin != null) list = list.filter((l) => (getSpecMileage(l) ?? 0) >= mMin);
     if (mMax != null) list = list.filter((l) => (getSpecMileage(l) ?? Infinity) <= mMax);
     if (filterState.condition) list = list.filter((l) => getSpecCondition(l) === filterState.condition);
+    if (filterState.manufacturer) {
+      const m = filterState.manufacturer.toLowerCase();
+      list = list.filter((l) => l.specs && "make" in l.specs && (l.specs.make ?? "").toLowerCase().includes(m));
+    }
+    if (filterState.engine) {
+      const e = filterState.engine.toLowerCase();
+      list = list.filter((l) => l.specs && "engine" in l.specs && (l.specs.engine ?? "").toLowerCase().includes(e));
+    }
+    if (filterState.transmission) {
+      const t = filterState.transmission.toLowerCase();
+      list = list.filter((l) => l.specs && "transmission" in l.specs && (l.specs.transmission ?? "").toLowerCase().includes(t));
+    }
+    if (filterState.trailerLength) {
+      const len = filterState.trailerLength.toLowerCase();
+      list = list.filter((l) => l.specs && "length" in l.specs && (l.specs.length ?? "").toLowerCase().includes(len));
+    }
     if (sort === "price-asc") list = [...list].sort((a, b) => a.price - b.price);
     else if (sort === "price-desc") list = [...list].sort((a, b) => b.price - a.price);
     else list = [...list].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
@@ -140,7 +161,8 @@ export function ListingsContent({ lang }: { lang: string }) {
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <h1 className="text-2xl font-bold text-foreground">{t.listing.listings}</h1>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs text-secondary hidden sm:inline">Map view — Coming soon</span>
               <select value={sort} onChange={(e) => setSort(e.target.value as SortOption)} className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm">
                 <option value="newest">{t.listing.newest}</option>
                 <option value="price-asc">{t.listing.priceLowToHigh}</option>

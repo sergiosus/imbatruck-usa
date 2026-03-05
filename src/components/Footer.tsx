@@ -3,7 +3,6 @@ import type { Locale } from "@/lib/locales";
 import { getT } from "@/lib/translations";
 
 export function Footer({ lang }: { lang: Locale }) {
-  const year = new Date().getFullYear();
   const t = getT(lang);
 
   return (
@@ -40,7 +39,7 @@ export function Footer({ lang }: { lang: Locale }) {
         </div>
         <div className="mt-10 border-t border-gray-700/80 pt-6">
           <p className="text-sm text-gray-400">
-            {t.footer.copyright.replace("{year}", String(year))}
+            {t.footer.copyright}
           </p>
         </div>
       </div>

@@ -26,9 +26,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { id } = await params;
   const listing = getListingById(id);
   if (!listing) return { title: "Listing not found" };
-  const category = getCategoryLabel(listing.category);
+  const stateName = getStateName(listing.state);
   return {
-    title: `${listing.title} | ${category} | Imbatruck Company LLC`,
+    title: `${listing.title} for Sale in ${stateName} | Imbatruck`,
     description: listing.description.slice(0, 160),
     openGraph: {
       title: listing.title,
@@ -142,6 +142,7 @@ export default async function ListingPage({ params }: PageProps) {
                 >
                   Contact seller
                 </a>
+                <p className="mt-3 text-xs text-secondary">Seller rating — Coming soon</p>
               </div>
               <RecentlyViewed lang={lang} />
             </div>

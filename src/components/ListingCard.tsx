@@ -59,7 +59,7 @@ export function ListingCard({ listing, variant = "grid", lang = "en" }: ListingC
   const priceText = listing.price === 0 ? t.listing.contactForPrice : formatPrice(listing.price);
 
   const imageBlock = (
-    <div className="relative aspect-[4/3] w-full overflow-hidden bg-gray-100">
+    <div className="relative aspect-video w-full overflow-hidden bg-gray-100">
       <img src={imageUrl} alt="" className="h-full w-full object-cover" />
       {listing.featured && (
         <span className="absolute left-3 top-3 z-10 rounded-md bg-cta px-2.5 py-1 text-xs font-semibold text-white shadow">

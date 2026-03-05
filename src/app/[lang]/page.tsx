@@ -60,6 +60,24 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
         </Link>
       </section>
 
+      <section className="mt-16 rounded-2xl border border-gray-200 bg-gray-50 px-6 py-10" aria-labelledby="safe-marketplace-heading">
+        <h2 id="safe-marketplace-heading" className="text-center text-xl font-semibold text-foreground">{t.home.safeMarketplaceTitle}</h2>
+        <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-3">
+          <div className="text-center">
+            <p className="font-medium text-foreground">{t.home.safeMarketplaceMeet}</p>
+          </div>
+          <div className="text-center">
+            <p className="font-medium text-foreground">{t.home.safeMarketplaceVerify}</p>
+          </div>
+          <div className="text-center">
+            <p className="font-medium text-foreground">{t.home.safeMarketplaceAvoid}</p>
+          </div>
+        </div>
+        <p className="mt-6 text-center">
+          <Link href={`/${lang}/safety`} className="font-medium text-primary hover:underline">{t.nav.safetyTips}</Link>
+        </p>
+      </section>
+
       <section className="mt-16 rounded-2xl border border-gray-200 bg-gray-50 px-6 py-10" aria-labelledby="trust-heading">
         <h2 id="trust-heading" className="text-center text-xl font-semibold text-foreground">{t.home.whyUs}</h2>
         <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" fill="none">
+  <rect width="800" height="450" fill="#e5e7eb"/>
+  <circle cx="350" cy="220" r="60" stroke="#9ca3af" stroke-width="2" fill="#d1d5db"/>
+  <rect x="420" y="180" width="80" height="80" rx="4" stroke="#9ca3af" stroke-width="2" fill="#d1d5db"/>
+  <path d="M500 320 L550 270 L600 320 Z" stroke="#9ca3af" stroke-width="2" fill="#d1d5db"/>
+  <text x="400" y="400" text-anchor="middle" fill="#6b7280" font-family="system-ui,sans-serif" font-size="14">Parts</text>
+</svg>
