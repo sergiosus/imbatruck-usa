@@ -15,14 +15,14 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Buy Trucks, Trailers & Freight Services | Imbatruck USA",
-    template: "%s | Imbatruck",
+    default: "Buy Trucks, Trailers, Parts & Freight Services | Imbatruck Company LLC",
+    template: "%s | Imbatruck Company LLC",
   },
   description:
-    "Buy and sell trucks, trailers, parts, and freight services in the USA. Connect directly with buyers and sellers. No marketplace fees.",
+    "US marketplace for trucks, trailers, parts and freight services.",
   openGraph: {
-    title: "Buy Trucks, Trailers & Freight Services | Imbatruck USA",
-    description: "Connect directly with buyers and sellers. No marketplace fees.",
+    title: "Buy Trucks, Trailers, Parts & Freight Services | Imbatruck Company LLC",
+    description: "US marketplace for trucks, trailers, parts and freight services.",
     url: "https://imbatruck.com",
     siteName: "Imbatruck Company LLC",
     locale: "en_US",

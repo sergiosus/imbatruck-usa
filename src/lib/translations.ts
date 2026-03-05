@@ -66,8 +66,8 @@ export const translations = {
       emptyMarketplaceCta: "Post a Listing",
     },
     home: {
-      title: "Buy and Sell Trucks, Trailers & Parts in the USA",
-      subtitle: "Connect directly with buyers and sellers. No marketplace fees.",
+      title: "Buy and Sell Trucks, Trailers, Parts & Freight Services in the USA",
+      subtitle: "Connect directly with buyers and sellers across the United States. No marketplace fees.",
       browseListings: "Browse listings",
       postListing: "Post a listing",
       featuredCategories: "Featured categories",
@@ -205,8 +205,8 @@ export const translations = {
       emptyMarketplaceCta: "Publicar anuncio",
     },
     home: {
-      title: "Compra y vende camiones, remolques y repuestos en EE. UU.",
-      subtitle: "Conecta directamente con compradores y vendedores. Sin comisiones.",
+      title: "Compra y vende camiones, remolques, repuestos y servicios de carga en EE. UU.",
+      subtitle: "Conecta directamente con compradores y vendedores en todo Estados Unidos. Sin comisiones.",
       browseListings: "Explorar anuncios",
       postListing: "Publicar anuncio",
       featuredCategories: "Categorías destacadas",
@@ -344,8 +344,8 @@ export const translations = {
       emptyMarketplaceCta: "发布信息",
     },
     home: {
-      title: "在美国买卖卡车、拖车与配件",
-      subtitle: "直接与买卖双方联系。无平台费用。",
+      title: "在美国买卖卡车、拖车、配件与货运服务",
+      subtitle: "直接与美国各地的买卖双方联系。无平台费用。",
       browseListings: "浏览列表",
       postListing: "发布信息",
       featuredCategories: "精选分类",

@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!listing) return { title: "Listing not found" };
   const stateName = getStateName(listing.state);
   return {
-    title: `${listing.title} for Sale in ${stateName} | Imbatruck`,
+    title: `${listing.title} for Sale in ${stateName} | Imbatruck Company LLC`,
     description: listing.description.slice(0, 160),
     openGraph: {
       title: listing.title,

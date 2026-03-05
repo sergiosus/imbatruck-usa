@@ -1,8 +1,6 @@
 import Link from "next/link";
-import Image from "next/image";
 import { RecentlyViewed } from "@/components/RecentlyViewed";
 import { getT } from "@/lib/translations";
-import { HERO_IMAGE_URL } from "@/lib/images";
 
 const FEATURED_CATEGORY_IDS = ["trucks", "trailers", "parts", "freight-services"] as const;
 
@@ -30,8 +28,13 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
               </Link>
             </div>
           </div>
-          <div className="relative aspect-[16/10] w-full max-w-lg">
-            <Image src={HERO_IMAGE_URL} alt="Imbatruck Company LLC marketplace: trucks and freight in the USA" fill className="object-cover" priority sizes="(max-width: 768px) 100vw, 50vw" />
+          <div className="relative w-full md:max-w-lg">
+            <img
+              src="/hero-truck.jpg"
+              alt="Imbatruck Company LLC marketplace for trucks, trailers, parts and freight services in the USA"
+              className="w-full rounded-lg object-cover shadow-md aspect-[16/10]"
+              fetchPriority="high"
+            />
           </div>
         </div>
       </section>
