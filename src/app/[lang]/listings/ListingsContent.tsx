@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState, useCallback, Suspense } from "react";
-import { MOCK_LISTINGS } from "@/lib/data";
+import { LISTINGS, type Listing } from "@/lib/data";
 import { FilterSidebar, defaultFilters, type FilterState } from "@/components/FilterSidebar";
 import { ListingCard } from "@/components/ListingCard";
 import { Breadcrumb } from "@/components/Breadcrumb";
@@ -27,19 +27,19 @@ function parseFilters(searchParams: URLSearchParams): FilterState {
   };
 }
 
-function getSpecYear(listing: (typeof MOCK_LISTINGS)[0]): number | undefined {
+function getSpecYear(listing: Listing): number | undefined {
   const s = listing.specs;
   if (!s) return undefined;
   if ("year" in s && typeof (s as { year?: number }).year === "number") return (s as { year: number }).year;
   return undefined;
 }
-function getSpecMileage(listing: (typeof MOCK_LISTINGS)[0]): number | undefined {
+function getSpecMileage(listing: Listing): number | undefined {
   const s = listing.specs;
   if (!s) return undefined;
   if ("mileage" in s && typeof (s as { mileage?: number }).mileage === "number") return (s as { mileage: number }).mileage;
   return undefined;
 }
-function getSpecCondition(listing: (typeof MOCK_LISTINGS)[0]): string | undefined {
+function getSpecCondition(listing: Listing): string | undefined {
   const s = listing.specs;
   if (!s || !("condition" in s)) return undefined;
   return (s as { condition?: string }).condition;
@@ -65,7 +65,7 @@ export function ListingsContent({ lang }: { lang: string }) {
   }, [filterState, sort, view, router, lang]);
 
   const filtered = useMemo(() => {
-    let list = MOCK_LISTINGS.filter((l) => !l.sold);
+    let list = LISTINGS.filter((l) => !l.sold);
     if (filterState.q) {
       const q = filterState.q.toLowerCase();
       list = list.filter((l) => l.title.toLowerCase().includes(q) || l.description.toLowerCase().includes(q));
@@ -153,8 +153,35 @@ export function ListingsContent({ lang }: { lang: string }) {
             </div>
           </div>
           {paginated.length === 0 ? (
-            <div className="mt-8">
-              <EmptyState title={t.listing.noMatch} description={t.listing.noMatchDesc} actionLabel={t.listing.clearFilters} actionHref={`/${lang}/listings`} secondaryLabel={t.listing.postListing} secondaryHref={`/${lang}/post`} />
+            <div className="mt-8 space-y-10">
+              <EmptyState
+                title={t.listing.emptyMarketplaceTitle}
+                description={t.listing.emptyMarketplaceDesc}
+                actionLabel={t.listing.emptyMarketplaceCta}
+                actionHref={`/${lang}/post`}
+                secondaryLabel={filtered.length === 0 && !filterState.q && !filterState.category && !filterState.state ? undefined : t.listing.clearFilters}
+                secondaryHref={filtered.length === 0 && !filterState.q && !filterState.category && !filterState.state ? undefined : `/${lang}/listings`}
+              />
+              <section className="rounded-2xl border border-gray-200 bg-gray-50 px-6 py-8" aria-labelledby="listings-how-heading">
+                <h2 id="listings-how-heading" className="text-center text-lg font-semibold text-foreground">{t.home.howItWorks}</h2>
+                <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-3">
+                  <div className="text-center">
+                    <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-bold text-white">1</span>
+                    <h3 className="mt-3 font-medium text-foreground">{t.home.step1Title}</h3>
+                    <p className="mt-1 text-sm text-secondary">{t.home.step1Desc}</p>
+                  </div>
+                  <div className="text-center">
+                    <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-bold text-white">2</span>
+                    <h3 className="mt-3 font-medium text-foreground">{t.home.step2Title}</h3>
+                    <p className="mt-1 text-sm text-secondary">{t.home.step2Desc}</p>
+                  </div>
+                  <div className="text-center">
+                    <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-bold text-white">3</span>
+                    <h3 className="mt-3 font-medium text-foreground">{t.home.step3Title}</h3>
+                    <p className="mt-1 text-sm text-secondary">{t.home.step3Desc}</p>
+                  </div>
+                </div>
+              </section>
             </div>
           ) : (
             <>

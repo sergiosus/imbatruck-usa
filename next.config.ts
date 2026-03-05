@@ -13,6 +13,7 @@ const nextConfig: NextConfig = {
       { source: "/", destination: "/en", permanent: false },
       { source: "/listings", destination: "/en/listings", permanent: false },
       { source: "/post", destination: "/en/post", permanent: false },
+      { source: "/post-listing", destination: "/en/post", permanent: false },
       { source: "/signin", destination: "/en/signin", permanent: false },
       { source: "/signup", destination: "/en/signup", permanent: false },
       { source: "/account", destination: "/en/account", permanent: false },

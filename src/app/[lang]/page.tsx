@@ -47,6 +47,19 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
         </div>
       </section>
 
+      <section className="mt-16 flex flex-col items-center justify-center rounded-2xl border border-dashed border-gray-300 bg-gray-50 py-16 px-6 text-center" aria-labelledby="empty-marketplace-heading">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gray-200 text-gray-500">
+          <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+          </svg>
+        </div>
+        <h2 id="empty-marketplace-heading" className="mt-4 text-xl font-semibold text-foreground">{t.listing.emptyMarketplaceTitle}</h2>
+        <p className="mt-2 max-w-md text-sm text-secondary">{t.listing.emptyMarketplaceDesc}</p>
+        <Link href={`/${lang}/post`} className="mt-6 inline-flex rounded-lg bg-cta px-6 py-3 text-base font-medium text-white shadow-md hover:bg-cta-hover focus:outline-none focus:ring-2 focus:ring-cta focus:ring-offset-2">
+          {t.listing.emptyMarketplaceCta}
+        </Link>
+      </section>
+
       <section className="mt-16 rounded-2xl border border-gray-200 bg-gray-50 px-6 py-10" aria-labelledby="trust-heading">
         <h2 id="trust-heading" className="text-center text-xl font-semibold text-foreground">{t.home.whyUs}</h2>
         <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">

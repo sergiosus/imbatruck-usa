@@ -98,12 +98,12 @@ export function PostForm({ lang }: { lang: string }) {
           </div>
           <div>
             <label htmlFor="email" className={labelClass}>Email</label>
-            <input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className={inputClass} placeholder="you@example.com" />
+            <input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className={inputClass} placeholder="your@email.com" />
             <p className="mt-1 text-xs text-secondary">Never share verification codes or passwords with buyers or sellers.</p>
           </div>
           <div>
             <label htmlFor="phone" className={labelClass}>Phone (optional)</label>
-            <input id="phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className={inputClass} placeholder="(555) 123-4567" />
+            <input id="phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className={inputClass} placeholder="Optional" />
           </div>
           {category === "trucks" && (
             <div className="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">

@@ -61,6 +61,9 @@ export const translations = {
       postListing: "Post a listing",
       home: "Home",
       listings: "Listings",
+      emptyMarketplaceTitle: "No listings available yet",
+      emptyMarketplaceDesc: "Be the first to post a truck, trailer, part, or freight service on Imbatruck.",
+      emptyMarketplaceCta: "Post a Listing",
     },
     home: {
       title: "Buy, Sell & Freight Services in the USA",
@@ -193,6 +196,9 @@ export const translations = {
       postListing: "Publicar anuncio",
       home: "Inicio",
       listings: "Anuncios",
+      emptyMarketplaceTitle: "Aún no hay anuncios",
+      emptyMarketplaceDesc: "Sé el primero en publicar un camión, remolque, repuesto o servicio de carga en Imbatruck.",
+      emptyMarketplaceCta: "Publicar anuncio",
     },
     home: {
       title: "Comprar, vender y servicios de carga en EE. UU.",
@@ -325,6 +331,9 @@ export const translations = {
       postListing: "发布信息",
       home: "首页",
       listings: "列表",
+      emptyMarketplaceTitle: "暂无列表",
+      emptyMarketplaceDesc: "成为在 Imbatruck 上发布卡车、拖车、配件或货运服务的第一人。",
+      emptyMarketplaceCta: "发布信息",
     },
     home: {
       title: "美国买卖与货运服务",
