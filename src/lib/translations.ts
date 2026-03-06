@@ -123,7 +123,7 @@ export const translations = {
       accept: "Accept",
     },
     footer: {
-      copyright: "© 2026 Imbatruck Company LLC. All rights reserved.",
+      rightsReserved: "All rights reserved.",
     },
     categories: {
       trucks: "Trucks",
@@ -262,7 +262,7 @@ export const translations = {
       accept: "Aceptar",
     },
     footer: {
-      copyright: "© 2026 Imbatruck Company LLC. Todos los derechos reservados.",
+      rightsReserved: "Todos los derechos reservados.",
     },
     categories: {
       trucks: "Camiones",
@@ -401,7 +401,7 @@ export const translations = {
       accept: "接受",
     },
     footer: {
-      copyright: "© 2026 Imbatruck Company LLC. 版权所有。",
+      rightsReserved: "版权所有。",
     },
     categories: {
       trucks: "卡车",

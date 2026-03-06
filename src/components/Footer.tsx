@@ -4,6 +4,7 @@ import { getT } from "@/lib/translations";
 
 export function Footer({ lang }: { lang: Locale }) {
   const t = getT(lang);
+  const year = new Date().getFullYear();
 
   return (
     <footer className="mt-auto bg-[#0f1419] text-gray-300">
@@ -39,7 +40,7 @@ export function Footer({ lang }: { lang: Locale }) {
         </div>
         <div className="mt-10 border-t border-gray-700/80 pt-6">
           <p className="text-sm text-gray-400">
-            {t.footer.copyright}
+            © {year} Imbatruck Company. {t.footer.rightsReserved}
           </p>
         </div>
       </div>

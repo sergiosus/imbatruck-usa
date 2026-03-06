@@ -15,8 +15,8 @@ export function Header({ lang }: { lang: Locale }) {
   return (
     <header className="sticky top-0 z-40 border-b border-gray-200 bg-white shadow-sm">
       <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
-        <Link href={prefix} className="shrink-0 text-xl font-semibold text-primary" aria-label="Imbatruck Company LLC home">
-          Imbatruck Company LLC
+        <Link href={prefix} className="shrink-0 text-xl font-semibold text-primary" aria-label="Imbatruck Company home">
+          Imbatruck Company
         </Link>
         <HeaderSearch lang={lang} />
         <nav className="flex flex-wrap items-center gap-3 sm:gap-4" aria-label="Main navigation">
