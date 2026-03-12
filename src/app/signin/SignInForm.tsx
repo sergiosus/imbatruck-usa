@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, Suspense } from "react";
-import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
 import { getT } from "@/lib/translations";
+import { PasswordInput } from "@/components/PasswordInput";
 
 function SignInFormInner({ lang, callbackUrl }: { lang: string; callbackUrl: string }) {
   const t = getT(lang);
@@ -19,20 +20,14 @@ function SignInFormInner({ lang, callbackUrl }: { lang: string; callbackUrl: str
     setError("");
     setLoading(true);
     try {
-      const res = await signIn("credentials", { email: email.trim().toLowerCase(), password, redirect: false });
-      if (res?.error) {
-        const msg = typeof res.error === "string" ? res.error : t.auth.invalidCredentials;
-        if (process.env.NODE_ENV === "development") {
-          const configHint =
-            msg.toLowerCase().includes("server configuration") || msg.toLowerCase().includes("configuration")
-              ? " Set NEXTAUTH_SECRET in .env.local and restart the dev server."
-              : "";
-          setError(msg + configHint);
-        } else {
-          setError(
-            msg.toLowerCase().includes("configuration") ? "Server configuration error. Check server logs or contact support." : t.auth.invalidCredentials
-          );
-        }
+      const supabase = createClient();
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: email.trim().toLowerCase(),
+        password,
+      });
+      if (signInError) {
+        const msg = signInError.message || t.auth.invalidCredentials;
+        setError(process.env.NODE_ENV === "development" ? `Signin failed: ${msg}` : t.auth.invalidCredentials);
         setLoading(false);
         return;
       }
@@ -40,9 +35,9 @@ function SignInFormInner({ lang, callbackUrl }: { lang: string; callbackUrl: str
       router.refresh();
     } catch (err) {
       const msg = err instanceof Error ? err.message : t.auth.somethingWrong;
-      setError(process.env.NODE_ENV === "development" ? msg : t.auth.somethingWrong);
-      setLoading(false);
+      setError(process.env.NODE_ENV === "development" ? `Signin failed: ${msg}` : t.auth.somethingWrong);
     }
+    setLoading(false);
   }
 
   return (
@@ -57,7 +52,10 @@ function SignInFormInner({ lang, callbackUrl }: { lang: string; callbackUrl: str
         </div>
         <div>
           <label htmlFor="signin-password" className="block text-sm font-medium text-foreground">{t.auth.password}</label>
-          <input id="signin-password" type="password" required autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2.5 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20" />
+          <PasswordInput id="signin-password" required autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2.5 pr-10 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20" />
+          <p className="mt-1.5 text-sm">
+            <Link href={`/${lang}/forgot-password`} className="text-primary hover:underline">{t.auth.forgotPassword}</Link>
+          </p>
         </div>
         <button type="submit" disabled={loading} className="w-full rounded-lg bg-cta py-3 font-medium text-white hover:bg-cta-hover disabled:opacity-70 focus:outline-none focus:ring-2 focus:ring-cta focus:ring-offset-2">
           {loading ? t.auth.signingIn : t.auth.signIn}

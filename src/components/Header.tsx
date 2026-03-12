@@ -1,14 +1,16 @@
 "use client";
 
-import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { HeaderSearch } from "./HeaderSearch";
 import { LOCALES, LOCALE_LABELS } from "@/lib/locales";
 import { getT } from "@/lib/translations";
+import { useSupabaseSession } from "@/hooks/useSupabaseSession";
 import type { Locale } from "@/lib/locales";
 
 export function Header({ lang }: { lang: Locale }) {
-  const { data: session, status } = useSession();
+  const { user: sessionUser, loading: status } = useSupabaseSession();
+  const session = sessionUser ? { user: { email: sessionUser.email } } : null;
+  const statusLabel = status ? "loading" : "authenticated";
   const t = getT(lang);
   const prefix = `/${lang}`;
 
@@ -41,7 +43,7 @@ export function Header({ lang }: { lang: Locale }) {
               </span>
             ))}
           </div>
-          {status === "loading" ? (
+          {statusLabel === "loading" ? (
             <span className="text-sm text-secondary">...</span>
           ) : session ? (
             <Link href={`${prefix}/account`} className="text-secondary hover:text-primary rounded focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">

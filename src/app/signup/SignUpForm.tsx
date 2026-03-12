@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, Suspense } from "react";
-import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
 import { getT } from "@/lib/translations";
+import { PasswordInput } from "@/components/PasswordInput";
 
 function SignUpFormInner({ lang, callbackUrl }: { lang: string; callbackUrl: string }) {
   const t = getT(lang);
@@ -28,29 +29,43 @@ function SignUpFormInner({ lang, callbackUrl }: { lang: string; callbackUrl: str
     }
     setLoading(true);
     try {
-      const res = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim().toLowerCase(), password }),
+      const supabase = createClient();
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+        email: email.trim().toLowerCase(),
+        password,
       });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        setError(data.error ?? t.auth.signUpFailed);
+      if (signUpError) {
+        const msg = signUpError.message || t.auth.signUpFailed;
+        setError(process.env.NODE_ENV === "development" ? `Signup failed: ${msg}` : msg);
         setLoading(false);
         return;
       }
-      const signInRes = await signIn("credentials", { email: email.trim().toLowerCase(), password, redirect: false });
-      if (signInRes?.error) {
-        setError(t.auth.accountCreatedSignInFailed);
+      if (signUpData?.session) {
+        router.push(callbackUrl);
+        router.refresh();
+        setLoading(false);
+        return;
+      }
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: email.trim().toLowerCase(),
+        password,
+      });
+      if (signInError) {
+        setError(
+          process.env.NODE_ENV === "development"
+            ? `Signup succeeded but signin failed: ${signInError.message}. You may need to confirm your email.`
+            : t.auth.accountCreatedSignInFailed
+        );
         setLoading(false);
         return;
       }
       router.push(callbackUrl);
       router.refresh();
-    } catch {
-      setError(t.auth.somethingWrong);
-      setLoading(false);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : t.auth.somethingWrong;
+      setError(process.env.NODE_ENV === "development" ? `Signup failed: ${msg}` : t.auth.somethingWrong);
     }
+    setLoading(false);
   }
 
   return (
@@ -65,12 +80,12 @@ function SignUpFormInner({ lang, callbackUrl }: { lang: string; callbackUrl: str
         </div>
         <div>
           <label htmlFor="signup-password" className="block text-sm font-medium text-foreground">{t.auth.password}</label>
-          <input id="signup-password" type="password" required autoComplete="new-password" minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2.5 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20" />
+          <PasswordInput id="signup-password" required autoComplete="new-password" minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2.5 pr-10 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20" />
           <p className="mt-1 text-xs text-secondary">{t.auth.atLeast6}</p>
         </div>
         <div>
           <label htmlFor="signup-confirm" className="block text-sm font-medium text-foreground">{t.auth.confirmPassword}</label>
-          <input id="signup-confirm" type="password" required autoComplete="new-password" value={confirm} onChange={(e) => setConfirm(e.target.value)} className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2.5 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20" />
+          <PasswordInput id="signup-confirm" required autoComplete="new-password" value={confirm} onChange={(e) => setConfirm(e.target.value)} className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2.5 pr-10 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20" />
         </div>
         <button type="submit" disabled={loading} className="w-full rounded-lg bg-cta py-3 font-medium text-white hover:bg-cta-hover disabled:opacity-70 focus:outline-none focus:ring-2 focus:ring-cta focus:ring-offset-2">
           {loading ? t.auth.creatingAccount : t.auth.createAccount}

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
+import { useSupabaseSession } from "@/hooks/useSupabaseSession";
 import { CATEGORIES, US_STATES, CONDITIONS, type CategoryId } from "@/lib/data";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { getT } from "@/lib/translations";
@@ -14,7 +14,9 @@ const labelClass = "block text-sm font-medium text-foreground";
 export function PostForm({ lang }: { lang: string }) {
   const t = getT(lang);
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { user: sessionUser, loading: sessionLoading } = useSupabaseSession();
+  const session = sessionUser ? { user: { email: sessionUser.email } } : null;
+  const status = sessionLoading ? "loading" : "authenticated";
   const [submitError, setSubmitError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [category, setCategory] = useState<CategoryId | "">("");

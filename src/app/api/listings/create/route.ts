@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { createClient } from "@/lib/supabase/server";
 
-/** POST /api/listings/create — create a listing. Requires auth. No Prisma on page load; only runs on form submit. */
+/** POST /api/listings/create — create a listing. Requires auth (Supabase). */
 export async function POST(request: Request) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.email) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user?.email) {
     return NextResponse.json(
       { error: "You must sign in to post a listing." },
       { status: 401 }
@@ -21,7 +21,7 @@ export async function POST(request: Request) {
     const state = typeof location.state === "string" ? location.state.trim() : "";
     const city = typeof location.city === "string" ? location.city.trim() : "";
     const description = typeof body.description === "string" ? body.description.trim() : "";
-    const email = typeof body.email === "string" ? body.email.trim() : session.user.email;
+    const email = typeof body.email === "string" ? body.email.trim() : user.email;
     const phone = typeof body.phone === "string" ? body.phone.trim() || undefined : undefined;
     const images = Array.isArray(body.images) ? body.images.filter((u: unknown) => typeof u === "string") : [];
 
