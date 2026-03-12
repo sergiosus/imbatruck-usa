@@ -21,14 +21,26 @@ function SignInFormInner({ lang, callbackUrl }: { lang: string; callbackUrl: str
     try {
       const res = await signIn("credentials", { email: email.trim().toLowerCase(), password, redirect: false });
       if (res?.error) {
-        setError(t.auth.invalidCredentials);
+        const msg = typeof res.error === "string" ? res.error : t.auth.invalidCredentials;
+        if (process.env.NODE_ENV === "development") {
+          const configHint =
+            msg.toLowerCase().includes("server configuration") || msg.toLowerCase().includes("configuration")
+              ? " Set NEXTAUTH_SECRET in .env.local and restart the dev server."
+              : "";
+          setError(msg + configHint);
+        } else {
+          setError(
+            msg.toLowerCase().includes("configuration") ? "Server configuration error. Check server logs or contact support." : t.auth.invalidCredentials
+          );
+        }
         setLoading(false);
         return;
       }
       router.push(callbackUrl);
       router.refresh();
-    } catch {
-      setError(t.auth.somethingWrong);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : t.auth.somethingWrong;
+      setError(process.env.NODE_ENV === "development" ? msg : t.auth.somethingWrong);
       setLoading(false);
     }
   }

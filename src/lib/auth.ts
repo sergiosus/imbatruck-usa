@@ -3,6 +3,14 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
 import { prisma } from "./prisma";
 
+const NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET;
+if (!NEXTAUTH_SECRET && process.env.NODE_ENV === "production") {
+  console.error("[auth] NEXTAUTH_SECRET is not set. Sign-in and session will fail. Set NEXTAUTH_SECRET in your environment.");
+}
+if (!NEXTAUTH_SECRET && process.env.NODE_ENV !== "production") {
+  console.warn("[auth] NEXTAUTH_SECRET is not set. Using a dev-only fallback. Set NEXTAUTH_SECRET in .env.local for production.");
+}
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -43,5 +51,5 @@ export const authOptions: NextAuthOptions = {
     signIn: "/signin",
   },
   session: { strategy: "jwt", maxAge: 30 * 24 * 60 * 60 },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: NEXTAUTH_SECRET || (process.env.NODE_ENV !== "production" ? "imbatruck-dev-secret-set-NEXTAUTH_SECRET-in-env" : undefined),
 };

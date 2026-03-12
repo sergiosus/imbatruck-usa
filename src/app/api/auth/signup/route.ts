@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { hash } from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 
+const isDev = process.env.NODE_ENV !== "production";
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -41,9 +43,12 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ ok: true });
   } catch (e) {
-    console.error("Signup error:", e);
+    const err = e instanceof Error ? e : new Error(String(e));
+    console.error("[signup] Server error:", err.message);
+    if (isDev) console.error("[signup] Stack:", err.stack);
+    const safeMessage = isDev && err.message ? err.message : "Something went wrong";
     return NextResponse.json(
-      { error: "Something went wrong" },
+      { error: safeMessage },
       { status: 500 }
     );
   }
