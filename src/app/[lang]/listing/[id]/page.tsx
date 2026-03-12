@@ -27,8 +27,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const listing = getListingById(id);
   if (!listing) return { title: "Listing not found" };
   const stateName = getStateName(listing.state);
+  const isFreightLoad = listing.category === "freight-services" && listing.specs != null && "originCity" in listing.specs;
+  const suffix = isFreightLoad ? "Load" : `for Sale in ${stateName}`;
   return {
-    title: `${listing.title} for Sale in ${stateName} | Imbatruck Company LLC`,
+    title: `${listing.title} ${suffix} | Imbatruck Company LLC`,
     description: listing.description.slice(0, 160),
     openGraph: {
       title: listing.title,
@@ -72,13 +74,19 @@ export default async function ListingPage({ params }: PageProps) {
         <div className="mt-6 flex flex-col gap-8 lg:flex-row">
           <div className="min-w-0 flex-1">
             <div className="rounded-lg border border-gray-200 bg-white overflow-hidden shadow-sm">
-              <ImageGallery imageUrls={imageUrls} title={listing.title} />
+              <ImageGallery imageUrls={imageUrls} title={listing.title} category={listing.category} />
               <div className="p-6">
                 <p className="text-sm font-medium uppercase text-primary">
                   {getCategoryLabel(listing.category)}
                 </p>
+                {listing.isSample && (
+                  <span className="mt-2 inline-block rounded-md bg-amber-600 px-2.5 py-1 text-xs font-semibold text-white">
+                    Sample Listing
+                  </span>
+                )}
                 <h1 className="mt-1 text-2xl font-bold text-foreground">{listing.title}</h1>
                 <p className="mt-2 text-2xl font-semibold text-foreground">
+                  {listing.category === "freight-services" && listing.specs && "originCity" in listing.specs ? "Rate: " : ""}
                   {formatPrice(listing.price)}
                 </p>
                 <p className="mt-1 text-secondary">

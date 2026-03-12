@@ -1,12 +1,17 @@
 "use client";
 
-import { CATEGORIES, US_STATES, CONDITIONS } from "@/lib/data";
+import { CATEGORIES, US_STATES, CONDITIONS, TRAILER_TYPES } from "@/lib/data";
 import { getT } from "@/lib/translations";
 
 export interface FilterState {
   q: string;
   category: string;
   state: string;
+  originState: string;
+  destinationState: string;
+  trailerType: string;
+  weightMin: string;
+  weightMax: string;
   priceMin: string;
   priceMax: string;
   yearMin: string;
@@ -34,6 +39,11 @@ export const defaultFilters: FilterState = {
   q: "",
   category: "",
   state: "",
+  originState: "",
+  destinationState: "",
+  trailerType: "",
+  weightMin: "",
+  weightMax: "",
   priceMin: "",
   priceMax: "",
   yearMin: "",
@@ -96,6 +106,67 @@ export function FilterSidebar({
               <option key={s.code} value={s.code}>{s.name}</option>
             ))}
           </select>
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-secondary">{t.filters.originState}</label>
+          <select
+            value={filters.originState}
+            onChange={(e) => onFilterChange("originState", e.target.value)}
+            className="mt-1 w-full rounded border border-gray-300 bg-white px-3 py-2 text-sm"
+          >
+            <option value="">{t.filters.all}</option>
+            {US_STATES.map((s) => (
+              <option key={s.code} value={s.code}>{s.name}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-secondary">{t.filters.destinationState}</label>
+          <select
+            value={filters.destinationState}
+            onChange={(e) => onFilterChange("destinationState", e.target.value)}
+            className="mt-1 w-full rounded border border-gray-300 bg-white px-3 py-2 text-sm"
+          >
+            <option value="">{t.filters.all}</option>
+            {US_STATES.map((s) => (
+              <option key={s.code} value={s.code}>{s.name}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-secondary">{t.filters.trailerType}</label>
+          <select
+            value={filters.trailerType}
+            onChange={(e) => onFilterChange("trailerType", e.target.value)}
+            className="mt-1 w-full rounded border border-gray-300 bg-white px-3 py-2 text-sm"
+          >
+            <option value="">{t.filters.any}</option>
+            {TRAILER_TYPES.map((trailer) => (
+              <option key={trailer} value={trailer}>{trailer}</option>
+            ))}
+          </select>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <div>
+            <label className="block text-xs font-medium text-secondary">{t.filters.weightMin}</label>
+            <input
+              type="number"
+              min={0}
+              value={filters.weightMin}
+              onChange={(e) => onFilterChange("weightMin", e.target.value)}
+              className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-secondary">{t.filters.weightMax}</label>
+            <input
+              type="number"
+              min={0}
+              value={filters.weightMax}
+              onChange={(e) => onFilterChange("weightMax", e.target.value)}
+              className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm"
+            />
+          </div>
         </div>
         <div className="grid grid-cols-2 gap-2">
           <div>

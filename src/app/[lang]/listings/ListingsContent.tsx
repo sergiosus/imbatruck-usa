@@ -17,6 +17,11 @@ function parseFilters(searchParams: URLSearchParams): FilterState {
     q: searchParams.get("q") ?? defaultFilters.q,
     category: searchParams.get("category") ?? defaultFilters.category,
     state: searchParams.get("state") ?? defaultFilters.state,
+    originState: searchParams.get("originState") ?? defaultFilters.originState,
+    destinationState: searchParams.get("destinationState") ?? defaultFilters.destinationState,
+    trailerType: searchParams.get("trailerType") ?? defaultFilters.trailerType,
+    weightMin: searchParams.get("weightMin") ?? defaultFilters.weightMin,
+    weightMax: searchParams.get("weightMax") ?? defaultFilters.weightMax,
     priceMin: searchParams.get("priceMin") ?? defaultFilters.priceMin,
     priceMax: searchParams.get("priceMax") ?? defaultFilters.priceMax,
     yearMin: searchParams.get("yearMin") ?? defaultFilters.yearMin,
@@ -69,6 +74,20 @@ export function ListingsContent({ lang }: { lang: string }) {
     router.push(`/${lang}/listings?${params.toString()}`);
   }, [filterState, sort, view, router, lang]);
 
+  const isFreightLoad = (listing: Listing): boolean =>
+    listing.category === "freight-services" && listing.specs != null && "originCity" in listing.specs;
+
+  const getFreightWeight = (listing: Listing): number | undefined => {
+    if (!listing.specs || !("weightLbs" in listing.specs)) return undefined;
+    return (listing.specs as { weightLbs?: number }).weightLbs;
+  };
+  const getFreightOriginState = (listing: Listing): string | undefined =>
+    listing.specs && "originState" in listing.specs ? (listing.specs as { originState?: string }).originState : undefined;
+  const getFreightDestState = (listing: Listing): string | undefined =>
+    listing.specs && "destinationState" in listing.specs ? (listing.specs as { destinationState?: string }).destinationState : undefined;
+  const getFreightTrailerType = (listing: Listing): string | undefined =>
+    listing.specs && "trailerType" in listing.specs ? (listing.specs as { trailerType?: string }).trailerType : undefined;
+
   const filtered = useMemo(() => {
     let list = LISTINGS.filter((l) => !l.sold);
     if (filterState.q) {
@@ -77,6 +96,13 @@ export function ListingsContent({ lang }: { lang: string }) {
     }
     if (filterState.category) list = list.filter((l) => l.category === filterState.category);
     if (filterState.state) list = list.filter((l) => l.state === filterState.state);
+    if (filterState.originState) list = list.filter((l) => !isFreightLoad(l) || getFreightOriginState(l) === filterState.originState);
+    if (filterState.destinationState) list = list.filter((l) => !isFreightLoad(l) || getFreightDestState(l) === filterState.destinationState);
+    if (filterState.trailerType) list = list.filter((l) => getFreightTrailerType(l) === filterState.trailerType);
+    const wMin = filterState.weightMin ? Number(filterState.weightMin) : null;
+    const wMax = filterState.weightMax ? Number(filterState.weightMax) : null;
+    if (wMin != null) list = list.filter((l) => (getFreightWeight(l) ?? 0) >= wMin);
+    if (wMax != null) list = list.filter((l) => (getFreightWeight(l) ?? Infinity) <= wMax);
     const pMin = filterState.priceMin ? Number(filterState.priceMin) : null;
     const pMax = filterState.priceMax ? Number(filterState.priceMax) : null;
     if (pMin != null) list = list.filter((l) => l.price >= pMin);
@@ -99,8 +125,8 @@ export function ListingsContent({ lang }: { lang: string }) {
       list = list.filter((l) => l.specs && "engine" in l.specs && (l.specs.engine ?? "").toLowerCase().includes(e));
     }
     if (filterState.transmission) {
-      const t = filterState.transmission.toLowerCase();
-      list = list.filter((l) => l.specs && "transmission" in l.specs && (l.specs.transmission ?? "").toLowerCase().includes(t));
+      const tr = filterState.transmission.toLowerCase();
+      list = list.filter((l) => l.specs && "transmission" in l.specs && (l.specs.transmission ?? "").toLowerCase().includes(tr));
     }
     if (filterState.trailerLength) {
       const len = filterState.trailerLength.toLowerCase();
@@ -155,6 +181,9 @@ export function ListingsContent({ lang }: { lang: string }) {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6">
+      <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        {t.listing.sampleNotice}
+      </div>
       <Breadcrumb items={[{ label: t.listing.home, href: `/${lang}` }, { label: t.listing.listings }]} />
       <div className="mt-4 flex flex-col gap-6 lg:flex-row">
         <FilterSidebar lang={lang} filters={filterState} onFilterChange={setFilter} onApply={applyFilters} onSaveSearch={saveSearch} resultCount={filtered.length} />

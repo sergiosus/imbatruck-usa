@@ -40,7 +40,7 @@ export function Footer({ lang }: { lang: Locale }) {
         </div>
         <div className="mt-10 border-t border-gray-700/80 pt-6">
           <p className="text-sm text-gray-400">
-            © {year} Imbatruck Company. {t.footer.rightsReserved}
+            © {year} Imbatruck Company LLC. {t.footer.rightsReserved}
           </p>
         </div>
       </div>

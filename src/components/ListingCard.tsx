@@ -7,6 +7,17 @@ import { getListingImageUrl } from "@/lib/images";
 import { getT } from "@/lib/translations";
 import type { Listing } from "@/lib/data";
 
+function isFreightLoad(listing: Listing): boolean {
+  return listing.category === "freight-services" && listing.specs != null && "originCity" in listing.specs;
+}
+function getRoute(listing: Listing): string | null {
+  if (!isFreightLoad(listing) || !listing.specs) return null;
+  const s = listing.specs as { originCity?: string; originState?: string; destinationCity?: string; destinationState?: string };
+  if (s.originCity && s.originState && s.destinationCity && s.destinationState)
+    return `${s.originCity}, ${s.originState} → ${s.destinationCity}, ${s.destinationState}`;
+  return null;
+}
+
 const SAVED_KEY = "imbatruck-saved";
 
 function getSavedIds(): string[] {
@@ -57,12 +68,25 @@ export function ListingCard({ listing, variant = "grid", lang = "en" }: ListingC
   const imageUrl = listing.imageUrls?.[0] ?? getListingImageUrl(listing.category);
   const categoryLabel = (getT(lang).categories as Record<string, string>)[listing.category] ?? getCategoryLabel(listing.category);
   const priceText = listing.price === 0 ? t.listing.contactForPrice : formatPrice(listing.price);
+  const route = getRoute(listing);
+  const [imgError, setImgError] = useState(false);
+  const effectiveImageUrl = imgError ? getListingImageUrl(listing.category) : imageUrl;
 
   const imageBlock = (
     <div className="relative aspect-video w-full overflow-hidden bg-gray-100">
-      <img src={imageUrl} alt="" className="h-full w-full object-cover" />
+      <img
+        src={effectiveImageUrl}
+        alt=""
+        className="h-full w-full object-cover"
+        onError={() => setImgError(true)}
+      />
+      {listing.isSample && (
+        <span className="absolute left-3 top-3 z-10 rounded-md bg-amber-600 px-2.5 py-1 text-xs font-semibold text-white shadow">
+          {t.listing.sampleListing}
+        </span>
+      )}
       {listing.featured && (
-        <span className="absolute left-3 top-3 z-10 rounded-md bg-cta px-2.5 py-1 text-xs font-semibold text-white shadow">
+        <span className={`absolute left-3 z-10 rounded-md bg-cta px-2.5 py-1 text-xs font-semibold text-white shadow ${listing.isSample ? "top-10" : "top-3"}`}>
           {t.listing.featured}
         </span>
       )}
@@ -92,7 +116,9 @@ export function ListingCard({ listing, variant = "grid", lang = "en" }: ListingC
       <h3 className="mt-1 font-semibold text-foreground line-clamp-2">
         {listing.title}
       </h3>
+      {route && <p className="text-sm text-secondary line-clamp-1">{route}</p>}
       <p className="mt-2 text-2xl font-bold text-foreground">{priceText}</p>
+      {!route && (
       <p className="mt-1 flex items-center gap-1.5 text-sm text-secondary">
         <svg className="h-4 w-4 shrink-0 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -100,6 +126,10 @@ export function ListingCard({ listing, variant = "grid", lang = "en" }: ListingC
         </svg>
         {getStateName(listing.state)}
       </p>
+      )}
+      <span className="mt-2 inline-block rounded-lg bg-primary/10 px-3 py-1.5 text-sm font-medium text-primary">
+        {t.listing.viewListing}
+      </span>
     </div>
   );
 
@@ -110,9 +140,12 @@ export function ListingCard({ listing, variant = "grid", lang = "en" }: ListingC
         className="flex gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
       >
         <div className="relative h-24 w-32 shrink-0 overflow-hidden rounded-lg bg-gray-100">
-          <img src={imageUrl} alt="" className="h-full w-full object-cover" />
+          <img src={effectiveImageUrl} alt="" className="h-full w-full object-cover" onError={() => setImgError(true)} />
+          {listing.isSample && (
+            <span className="absolute left-2 top-2 z-10 rounded bg-amber-600 px-2 py-0.5 text-xs font-semibold text-white">{t.listing.sampleListing}</span>
+          )}
           {listing.featured && (
-            <span className="absolute left-2 top-2 z-10 rounded bg-cta px-2 py-0.5 text-xs font-semibold text-white">
+            <span className={`absolute left-2 z-10 rounded bg-cta px-2 py-0.5 text-xs font-semibold text-white ${listing.isSample ? "top-8" : "top-2"}`}>
               {t.listing.featured}
             </span>
           )}

@@ -116,6 +116,27 @@ export interface FreightServiceSpecs {
   availability?: string;
 }
 
+/** Freight load listing (load board style): origin, destination, trailer type, weight, rate, pickup. */
+export interface FreightLoadSpecs {
+  originCity?: string;
+  originState?: string;
+  destinationCity?: string;
+  destinationState?: string;
+  trailerType?: string;
+  weightLbs?: number;
+  pickupDate?: string;
+}
+
+export const TRAILER_TYPES = [
+  "Dry Van",
+  "Flatbed",
+  "Reefer",
+  "Step Deck",
+  "Power Only",
+] as const;
+
+export type TrailerType = (typeof TRAILER_TYPES)[number];
+
 export interface DriverSpecs {
   licenseType?: string;
   experience?: string;
@@ -128,6 +149,7 @@ export type ListingSpecs =
   | EquipmentSpecs
   | PartsSpecs
   | FreightServiceSpecs
+  | FreightLoadSpecs
   | DriverSpecs;
 
 export interface Listing {
@@ -143,12 +165,16 @@ export interface Listing {
   imageUrls?: string[];
   featured?: boolean;
   sold?: boolean;
+  /** True for platform demonstration sample listings. */
+  isSample?: boolean;
   createdAt: string;
-  specs?: TruckSpecs | TrailerSpecs | EquipmentSpecs | PartsSpecs | FreightServiceSpecs | DriverSpecs;
+  specs?: TruckSpecs | TrailerSpecs | EquipmentSpecs | PartsSpecs | FreightServiceSpecs | FreightLoadSpecs | DriverSpecs;
 }
 
-/** All listings (from DB in production; empty until listings are implemented). */
-export const LISTINGS: Listing[] = [];
+/** All listings: sample demo data (freight loads + trucks) for platform demonstration. */
+import { getAllSampleListings } from "@/data/sampleListings";
+
+export const LISTINGS: Listing[] = getAllSampleListings();
 
 export function getListingById(id: string): Listing | undefined {
   return LISTINGS.find((l) => l.id === id);

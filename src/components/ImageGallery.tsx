@@ -1,17 +1,22 @@
 "use client";
 
 import { useState } from "react";
+import { getListingImageUrl } from "@/lib/images";
 import { DEFAULT_IMAGE_URL } from "@/lib/images";
 
 interface ImageGalleryProps {
   imageUrls: string[] | undefined;
   title: string;
+  category?: string;
 }
 
-export function ImageGallery({ imageUrls, title }: ImageGalleryProps) {
+export function ImageGallery({ imageUrls, title, category = "trucks" }: ImageGalleryProps) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [failed, setFailed] = useState<Set<number>>(new Set());
   const images = imageUrls?.length ? imageUrls : [DEFAULT_IMAGE_URL];
-  const current = images[activeIndex];
+  const getEffectiveUrl = (url: string, index: number) =>
+    failed.has(index) ? (category ? getListingImageUrl(category) : DEFAULT_IMAGE_URL) : url;
+  const current = getEffectiveUrl(images[activeIndex], activeIndex);
 
   return (
     <div className="space-y-3">
@@ -20,6 +25,7 @@ export function ImageGallery({ imageUrls, title }: ImageGalleryProps) {
           src={current}
           alt={`${title} - image ${activeIndex + 1}`}
           className="h-full w-full object-cover"
+          onError={() => setFailed((prev) => new Set(prev).add(activeIndex))}
         />
       </div>
       {images.length > 1 && (
@@ -33,7 +39,12 @@ export function ImageGallery({ imageUrls, title }: ImageGalleryProps) {
                 i === activeIndex ? "border-primary" : "border-gray-200"
               }`}
             >
-              <img src={url} alt="" className="h-full w-full object-cover" />
+              <img
+                src={getEffectiveUrl(url, i)}
+                alt=""
+                className="h-full w-full object-cover"
+                onError={() => setFailed((prev) => new Set(prev).add(i))}
+              />
             </button>
           ))}
         </div>

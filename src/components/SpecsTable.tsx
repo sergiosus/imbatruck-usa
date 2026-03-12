@@ -1,4 +1,4 @@
-import type { Listing, TruckSpecs, TrailerSpecs, EquipmentSpecs, PartsSpecs, FreightServiceSpecs, DriverSpecs } from "@/lib/data";
+import type { Listing, TruckSpecs, TrailerSpecs, EquipmentSpecs, PartsSpecs, FreightServiceSpecs, FreightLoadSpecs, DriverSpecs } from "@/lib/data";
 
 function SpecRow({ label, value }: { label: string; value?: string | number | boolean }) {
   if (value === undefined || value === "") return null;
@@ -57,6 +57,15 @@ export function SpecsTable({ listing }: { listing: Listing }) {
       { label: "Category", value: p.category },
       { label: "Compatible models", value: p.compatibleModels },
       { label: "Condition", value: p.condition },
+    );
+  } else if (listing.category === "freight-services" && s && "originCity" in s) {
+    const f = s as FreightLoadSpecs;
+    rows.push(
+      { label: "Origin", value: f.originCity && f.originState ? `${f.originCity}, ${f.originState}` : undefined },
+      { label: "Destination", value: f.destinationCity && f.destinationState ? `${f.destinationCity}, ${f.destinationState}` : undefined },
+      { label: "Trailer type", value: f.trailerType },
+      { label: "Weight (lbs)", value: f.weightLbs != null ? f.weightLbs.toLocaleString() : undefined },
+      { label: "Pickup date", value: f.pickupDate },
     );
   } else if (listing.category === "freight-services" && s && "serviceArea" in s) {
     const f = s as FreightServiceSpecs;
