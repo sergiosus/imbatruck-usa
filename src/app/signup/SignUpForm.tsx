@@ -30,6 +30,11 @@ function SignUpFormInner({ lang, callbackUrl }: { lang: string; callbackUrl: str
     setLoading(true);
     try {
       const supabase = createClient();
+      if (!supabase) {
+        setError(t.auth.somethingWrong);
+        setLoading(false);
+        return;
+      }
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email: email.trim().toLowerCase(),
         password,

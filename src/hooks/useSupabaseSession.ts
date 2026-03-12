@@ -10,9 +10,18 @@ export function useSupabaseSession(): { user: User | null; loading: boolean } {
 
   useEffect(() => {
     const supabase = createClient();
+    if (!supabase) {
+      setUser(null);
+      setLoading(false);
+      return;
+    }
     const getInitial = async () => {
-      const { data: { user: u } } = await supabase.auth.getUser();
-      setUser(u ?? null);
+      try {
+        const { data: { user: u } } = await supabase.auth.getUser();
+        setUser(u ?? null);
+      } catch {
+        setUser(null);
+      }
       setLoading(false);
     };
     getInitial();

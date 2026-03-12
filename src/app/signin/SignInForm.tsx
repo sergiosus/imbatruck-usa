@@ -21,6 +21,11 @@ function SignInFormInner({ lang, callbackUrl }: { lang: string; callbackUrl: str
     setLoading(true);
     try {
       const supabase = createClient();
+      if (!supabase) {
+        setError(t.auth.somethingWrong);
+        setLoading(false);
+        return;
+      }
       const { error: signInError } = await supabase.auth.signInWithPassword({
         email: email.trim().toLowerCase(),
         password,

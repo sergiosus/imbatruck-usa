@@ -19,6 +19,10 @@ export function ResetPasswordForm({ lang }: { lang: string }) {
 
   useEffect(() => {
     const supabase = createClient();
+    if (!supabase) {
+      router.replace(`/${lang}/signin`);
+      return;
+    }
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) {
         router.replace(`/${lang}/signin`);
@@ -42,6 +46,11 @@ export function ResetPasswordForm({ lang }: { lang: string }) {
     setLoading(true);
     try {
       const supabase = createClient();
+      if (!supabase) {
+        setError(t.auth.resetLinkError);
+        setLoading(false);
+        return;
+      }
       const { error: updateError } = await supabase.auth.updateUser({ password });
       if (updateError) {
         setError(process.env.NODE_ENV === "development" ? updateError.message : t.auth.resetLinkError);
